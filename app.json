@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "sc-ptz-control",
+    "name": "SC PTZ Control",
     "slug": "sc-ptz-control",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,7 +19,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.saulotarsobc.scptzcontrol",
+      "permissions": [
+        "INTERNET",
+        "CAMERA"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +36,21 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "e0a754e9-9b7d-4354-9875-e45e953c270c"
+      }
+    },
+    "owner": "saulotarsobc",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/e0a754e9-9b7d-4354-9875-e45e953c270c"
     }
   }
 }
