@@ -1,10 +1,17 @@
-import crypto from "crypto";
+import * as Crypto from "expo-crypto";
+
+export const blurhash =
+  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+
+const md5 = async (str: string): Promise<string> => {
+  return await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.MD5, str);
+};
 
 export async function fetchWithDigestAuth(
   url: string,
   username: string,
   password: string
-) {
+): Promise<string> {
   const authHeader = (
     method: any,
     uri: any,
@@ -14,11 +21,23 @@ export async function fetchWithDigestAuth(
     nc: any,
     cnonce: any,
     response: any
-  ) => {
+  ): string => {
     return `Digest username="${username}", realm="${realm}", nonce="${nonce}", uri="${uri}", qop=${qop}, nc=${nc}, cnonce="${cnonce}", response="${response}"`;
   };
 
-  const makeDigestResponse = (
+  /**
+   * Calculates the Digest Response for Digest Authentication.
+   *
+   * @param {any} nonce - The nonce value from the server.
+   * @param {any} realm - The realm value from the server.
+   * @param {any} qop - The qop value from the server.
+   * @param {any} method - The HTTP method of the request.
+   * @param {any} uri - The URI of the request.
+   * @param {any} nc - The nonce count value.
+   * @param {any} cnonce - The client nonce value.
+   * @return {Promise<string>} A promise that resolves to the digest response.
+   */
+  const makeDigestResponse = async (
     nonce: any,
     realm: any,
     qop: any,
@@ -26,18 +45,12 @@ export async function fetchWithDigestAuth(
     uri: any,
     nc: any,
     cnonce: any
-  ) => {
-    const ha1 = md5(`${username}:${realm}:${password}`);
-    const ha2 = md5(`${method}:${uri}`);
-    return md5(`${ha1}:${nonce}:${nc}:${cnonce}:${qop}:${ha2}`);
+  ): Promise<string> => {
+    const ha1 = await md5(`${username}:${realm}:${password}`);
+    const ha2 = await md5(`${method}:${uri}`);
+    return await md5(`${ha1}:${nonce}:${nc}:${cnonce}:${qop}:${ha2}`);
   };
 
-  const md5 = (str: string) => {
-    // Replace this with an actual MD5 implementation or import from a library
-    return crypto.createHash("md5").update(str).digest("hex");
-  };
-
-  // First request to get the WWW-Authenticate header
   const initialResponse = await fetch(url);
   if (!initialResponse.headers.has("www-authenticate")) {
     throw new Error("No www-authenticate header in the response");
@@ -54,14 +67,14 @@ export async function fetchWithDigestAuth(
     }, {});
 
   const method = "GET";
-  const uri = url.replace(/^.*\/\/[^\/]+/, ""); // Extract URI from the URL
+  const uri = url.replace(/^.*\/\/[^\/]+/, ""); // Extrai o URI do URL
   const nonce = authParams["nonce"];
   const realm = authParams["realm"];
   const qop = "auth";
   const nc = "00000001";
   const cnonce = Math.random().toString(36).substring(2, 15);
 
-  const responseHash = makeDigestResponse(
+  const responseHash = await makeDigestResponse(
     nonce,
     realm,
     qop,
@@ -81,7 +94,6 @@ export async function fetchWithDigestAuth(
     responseHash
   );
 
-  // Second request with the Digest authorization header
   const finalResponse = await fetch(url, {
     headers: {
       Authorization: authorization,

@@ -22,9 +22,12 @@
       },
       "package": "com.saulotarsobc.scptzcontrol",
       "permissions": [
-        "INTERNET",
-        "CAMERA"
-      ]
+        "INTERNET"
+      ],
+      "statusBar": {
+        "style": "light",
+        "backgroundColor": "#000000"
+      }
     },
     "web": {
       "bundler": "metro",
