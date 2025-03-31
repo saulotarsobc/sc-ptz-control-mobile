@@ -7,7 +7,7 @@ import Monitor from "../components/monitor";
 export default function Index() {
   const [device, setDevice] = useState("http://10.0.0.123");
   const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("liblag.01");
+  const [password, setPassword] = useState("admin");
   const [channel, setChannel] = useState("8");
 
   const handleChangeScene = async (scene: string) => {
